@@ -1,0 +1,46 @@
+name: CD smoke check
+
+# Railway auto-deploys from GitHub. This workflow does NOT deploy —
+# it verifies the production build and (optionally) pings the live URL
+# after a push to main. Set RAILWAY_URL as a repo Variable for the ping.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  prod-build-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Boot production server and check /health
+        run: |
+          NODE_ENV=production node apps/backend/server.js &
+          SRV=$!
+          trap "kill $SRV" EXIT
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:5000/health | tee /tmp/health.json; then
+              break
+            fi
+            sleep 2
+          done
+          cat /tmp/health.json
+          node -e "const h=require('/tmp/health.json'); if(h.status!=='ok'||!h.modelLoaded) { console.error(h); process.exit(1); }"
+
+  live-ping:
+    needs: prod-build-check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping live Railway URL (optional)
+        run: |
+          if [ -z "${{ vars.RAILWAY_URL }}" ]; then
+            echo "RAILWAY_URL not set — skipping live ping."
+            exit 0
+          fi
+          curl -sf "${{ vars.RAILWAY_URL }}/health"

@@ -1,0 +1,10 @@
+node_modules/
+.turbo/
+AGENTS.md
+LICENSE.md
+apps/web/dist/
+apps/web/build/
+apps/backend/model/
+coverage/
+scripts/test_input.json
+package-lock.json

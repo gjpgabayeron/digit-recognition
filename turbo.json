@@ -14,8 +14,8 @@
       "persistent": true,
       "cache": false
     },
-    "test": {
-      "outputs": ["coverage/**"]
-    }
+    "test": {},
+    "lint": {},
+    "typecheck": {}
   }
 }
