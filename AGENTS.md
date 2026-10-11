@@ -8,7 +8,9 @@ Turborepo + npm workspaces. Two apps: `apps/backend` (Express + TF.js inference)
 - `npm run dev` — runs both apps via Turbo (web `:5173`, backend `:5000`)
 - `npm run build` — `turbo run build`; only `apps/web` has a real build (`tsc -b && vite build` → `apps/web/dist/`)
 - `npm run prod` — prod check locally: `NODE_ENV=production node apps/backend/server.js` (Express serves API + `../web/dist` on `:5000`). Always `npm run build` first.
-- No JS test/lint scripts at root or in apps. `npm run test` (`turbo run test`) is a no-op — no test script exists in either app. Python check: `cd scripts && python test_setup.py` (must run from `scripts/`; uses relative `../` paths, writes `scripts/test_input.json`).
+- `npm run lint` / `typecheck` — `turbo run lint` (ESLint: web + backend) / `turbo run typecheck` (web `tsc --noEmit`); backend is plain JS, no typecheck
+- `npm run test` — `turbo run test`; backend runs `node --test test/smoke.test.js` (model artifacts, route guards, `/health` shape), web has no tests yet. Python check: `cd scripts && pip install -r requirements.txt && python test_setup.py` (must run from `scripts/`; uses relative `../` paths, writes `scripts/test_input.json`)
+- `npm run format:check` / `format:write` — Prettier repo-wide (`AGENTS.md`, `LICENSE.md`, `apps/backend/model/`, `package-lock.json` ignored)
 
 ## Architecture quirks
 
