@@ -42,7 +42,7 @@
     "turbo": "latest"
   },
   "engines": {
-    "node": ">=20.11.0"
+    "node": ">=22"
   },
   "packageManager": "npm@10.9.2"
 }
