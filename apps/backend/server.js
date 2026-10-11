@@ -1,6 +1,12 @@
 const express = require("express");
 const { version } = require("./package.json");
-const tf = require("@tensorflow/tfjs");
+// Scoped tfjs imports (core + layers + converter + CPU backend) instead of the
+// @tensorflow/tfjs meta-package: same inference API, without its unused CLI
+// tooling dependencies (yargs/argparse/sprintf-js).
+const tf = require("@tensorflow/tfjs-core");
+const { sequential, layers } = require("@tensorflow/tfjs-layers");
+require("@tensorflow/tfjs-converter");
+require("@tensorflow/tfjs-backend-cpu");
 const cors = require("cors");
 const helmet = require("helmet");
 const multer = require("multer");
@@ -79,11 +85,11 @@ let model;
 
 async function loadModel() {
   try {
-    model = tf.sequential({
+    model = sequential({
       layers: [
-        tf.layers.dense({ inputShape: [784], units: 128, activation: "relu" }),
-        tf.layers.dense({ units: 64, activation: "relu" }),
-        tf.layers.dense({ units: 10, activation: "softmax" }),
+        layers.dense({ inputShape: [784], units: 128, activation: "relu" }),
+        layers.dense({ units: 64, activation: "relu" }),
+        layers.dense({ units: 10, activation: "softmax" }),
       ],
     });
 
@@ -148,10 +154,12 @@ app.post("/predict/image", predictLimiter, upload.single("image"), async (req, r
     const inputTensor = tf.tensor2d([pixels], [1, 784]);
     const prediction = model.predict(inputTensor);
     const probabilities = await prediction.data();
-    const predictedClass = prediction.argMax(-1).dataSync()[0];
+    const topClass = tf.argMax(prediction, -1);
+    const predictedClass = topClass.dataSync()[0];
 
     inputTensor.dispose();
     prediction.dispose();
+    topClass.dispose();
 
     res.json({
       predictedClass,
@@ -178,10 +186,12 @@ app.post("/predict/raw", predictLimiter, async (req, res) => {
     const prediction = model.predict(inputTensor);
     const probabilities = await prediction.data();
     const inferenceMs = Math.round((performance.now() - started) * 10) / 10;
-    const predictedClass = prediction.argMax(-1).dataSync()[0];
+    const topClass = tf.argMax(prediction, -1);
+    const predictedClass = topClass.dataSync()[0];
 
     inputTensor.dispose();
     prediction.dispose();
+    topClass.dispose();
 
     res.json({
       predictedClass,
