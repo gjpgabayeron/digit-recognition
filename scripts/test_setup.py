@@ -6,6 +6,9 @@ Test script to verify the model conversion and backend setup
 import json
 import sys
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 def test_model_files():
     """Check if model files exist"""
     import os

@@ -10,12 +10,39 @@
     "build": "turbo run build",
     "start": "turbo run start",
     "test": "turbo run test",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "format:check": "prettier --check .",
+    "format:write": "prettier --write .",
+    "commitlint": "commitlint --from=HEAD~1 --to=HEAD --verbose",
+    "prepare": "husky",
     "prod": "cross-env NODE_ENV=production node apps/backend/server.js"
   },
+  "lint-staged": {
+    "*.{js,cjs,mjs,ts,tsx,json,md,yml,yaml}": [
+      "prettier --write"
+    ],
+    "apps/web/**/*.{ts,tsx}": [
+      "eslint --fix"
+    ],
+    "apps/backend/**/*.js": [
+      "eslint --fix"
+    ]
+  },
   "devDependencies": {
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
+    "@eslint/js": "^10.0.1",
     "cross-env": "^10.1.0",
+    "eslint": "^10.12.0",
+    "globals": "^17.13.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
+    "prettier": "^3.9.10",
     "turbo": "latest"
   },
-  "engines": { "node": ">=18" },
+  "engines": {
+    "node": ">=18"
+  },
   "packageManager": "npm@10.9.2"
 }

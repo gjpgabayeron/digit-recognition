@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-const API_URL = import.meta.env.VITE_API_URL ?? '';
+const API_URL = import.meta.env.VITE_API_URL ?? "";
 
-export type ModelStatus = 'loading' | 'online' | 'offline';
+export type ModelStatus = "loading" | "online" | "offline";
 
 export interface Health {
   status: ModelStatus;
@@ -10,7 +10,7 @@ export interface Health {
 }
 
 export function useHealth(): Health {
-  const [health, setHealth] = useState<Health>({ status: 'loading', version: null });
+  const [health, setHealth] = useState<Health>({ status: "loading", version: null });
 
   useEffect(() => {
     let cancelled = false;
@@ -19,15 +19,17 @@ export function useHealth(): Health {
       .then((data) => {
         if (!cancelled) {
           setHealth({
-            status: data.modelLoaded ? 'online' : 'offline',
+            status: data.modelLoaded ? "online" : "offline",
             version: data.version ?? null,
           });
         }
       })
       .catch(() => {
-        if (!cancelled) setHealth({ status: 'offline', version: null });
+        if (!cancelled) setHealth({ status: "offline", version: null });
       });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return health;

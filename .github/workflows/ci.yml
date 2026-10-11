@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-lint-test:
+    name: lint / typecheck / test / build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: scripts/requirements.txt
+
+      - name: Install JS deps
+        run: npm ci
+
+      - name: Install Python deps (model verification script)
+        run: pip install -r scripts/requirements.txt
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: "Test (turbo: backend smoke)"
+        run: npm run test
+
+      - name: "Verify model artifacts (scripts/test_setup.py)"
+        working-directory: scripts
+        run: python test_setup.py
+
+      - name: Build
+        run: npm run build
+
+      - name: Audit (advisory, non-blocking)
+        run: npm audit --omit=dev || true

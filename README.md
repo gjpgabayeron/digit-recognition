@@ -1,5 +1,8 @@
 # Digit Recognizer
 
+![CI](https://github.com/justCallMeJeg/digit-recognition/actions/workflows/ci.yml/badge.svg)
+![Commitlint](https://github.com/justCallMeJeg/digit-recognition/actions/workflows/commitlint.yml/badge.svg)
+
 A full-stack handwritten digit recognition app built on a Keras MNIST model. Draw a digit in the browser and the model classifies it in real time, returning a ranked probability list for all 10 classes.
 
 **Live demo:** https://digitrecognitionict120.up.railway.app
@@ -17,12 +20,12 @@ A full-stack handwritten digit recognition app built on a Keras MNIST model. Dra
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Frontend | React 19, TypeScript, Vite, TailwindCSS v4, shadcn/ui |
-| Backend | Node.js, Express, TensorFlow.js |
-| Model | Keras Sequential (Dense 784→128→64→10) trained on MNIST |
-| Monorepo | Turborepo, npm workspaces |
+| Layer    | Technology                                              |
+| -------- | ------------------------------------------------------- |
+| Frontend | React 19, TypeScript, Vite, TailwindCSS v4, shadcn/ui   |
+| Backend  | Node.js, Express, TensorFlow.js                         |
+| Model    | Keras Sequential (Dense 784→128→64→10) trained on MNIST |
+| Monorepo | Turborepo, npm workspaces                               |
 
 ---
 
@@ -51,7 +54,7 @@ digit-recognition/
 
 - **Node.js** v18 or higher
 - **npm** v9 or higher
-- **Python 3.9+** with `tensorflow` and `numpy` *(only needed to re-convert the model)*
+- **Python 3.9+** with `tensorflow` and `numpy` _(only needed to re-convert the model)_
 
 ---
 
@@ -78,9 +81,9 @@ npm run dev
 
 Starts both servers concurrently via Turbo:
 
-| Service | URL |
-|---|---|
-| Frontend (Vite) | http://localhost:5173 |
+| Service           | URL                   |
+| ----------------- | --------------------- |
+| Frontend (Vite)   | http://localhost:5173 |
 | Backend (Express) | http://localhost:5000 |
 
 ### 4. Production build (local test)
@@ -103,15 +106,32 @@ Railway hosts the backend and frontend as a single Node.js service. The `railway
 3. Select this repository
 4. In the Railway dashboard under **Variables**, add:
 
-   | Variable | Value |
-   |---|---|
-   | `NODE_ENV` | `production` |
+   | Variable         | Value                                                                                                  |
+   | ---------------- | ------------------------------------------------------------------------------------------------------ |
+   | `NODE_ENV`       | `production`                                                                                           |
    | `ALLOWED_ORIGIN` | your Railway public URL (e.g. `https://digit-recognizer.up.railway.app`) — set this after first deploy |
 
-5. Railway will run `npm install && npm run build` then start the server
+5. Railway will run `npm ci && npm run build` then start the server
 6. Once deployed, copy the public URL and set it as `ALLOWED_ORIGIN` to lock CORS
+7. Optional: set repo Variable `RAILWAY_URL` to the public URL so the `CD smoke check` workflow pings `/health` after `main` pushes
 
 > **`VITE_API_URL` is not needed in production** — the frontend is served from the same Express server, so API calls use relative paths automatically.
+
+---
+
+## Code quality scaffold
+
+| Check                           | Command                                                                 |
+| ------------------------------- | ----------------------------------------------------------------------- |
+| Lint all                        | `npm run lint`                                                          |
+| Typecheck (web)                 | `npm run typecheck`                                                     |
+| Format check / write            | `npm run format:check` / `npm run format:write`                         |
+| Tests (backend smoke via Turbo) | `npm run test`                                                          |
+| Model artifact check            | `cd scripts && pip install -r requirements.txt && python test_setup.py` |
+
+CI (`.github/workflows/ci.yml`) runs lint → typecheck → format check → test → model check → build → advisory `npm audit` on pushes/PRs to `main`/`dev`. CD (`.github/workflows/cd.yml`) rebuilds prod on `main` and boots the server for a `/health` smoke test; Railway itself auto-deploys from GitHub.
+
+Commits follow [Conventional Commits](https://www.conventionalcommits.org/) and are enforced by commitlint + Husky (`feat:`, `fix:`, `chore:`, `docs:`, `ci:`, ...). Pre-commit runs `lint-staged` (Prettier + ESLint autofix).
 
 ---
 
@@ -130,11 +150,13 @@ Returns model load status.
 Accepts a flat array of 784 normalized float values (grayscale pixels, 0.0–1.0, black background).
 
 **Request**
+
 ```json
 { "data": [0.0, 0.0, 0.95, ...] }
 ```
 
 **Response**
+
 ```json
 {
   "predictedClass": 7,
@@ -170,4 +192,5 @@ python convert_model.py
 ```
 
 ---
+
 Web App Created by Geger John Paul Gabayeron and Model Created by Joseph Mikhaeli Jalandoni
