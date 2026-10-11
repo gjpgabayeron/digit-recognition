@@ -15,7 +15,7 @@
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
     "commitlint": "commitlint --from=HEAD~1 --to=HEAD --verbose",
-    "prepare": "husky",
+    "prepare": "husky || exit 0",
     "prod": "cross-env NODE_ENV=production node apps/backend/server.js"
   },
   "lint-staged": {
