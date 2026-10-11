@@ -5,9 +5,25 @@ interface DigitRowProps {
   prob: number;
   rank: number;
   isTop: boolean;
+  decimals?: number;
+  tone?: "emerald" | "amber" | "muted";
 }
 
-export function DigitRow({ digit, prob, rank, isTop }: DigitRowProps) {
+export function DigitRow({
+  digit,
+  prob,
+  rank,
+  isTop,
+  decimals = 1,
+  tone = "emerald",
+}: DigitRowProps) {
+  const barClass = isTop
+    ? tone === "amber"
+      ? "bg-amber-500"
+      : tone === "muted"
+        ? "bg-muted-foreground"
+        : "bg-emerald-500"
+    : "bg-foreground/30";
   return (
     <div
       className="grid items-center gap-3 py-2 border-b border-border last:border-b-0 animate-fade-in-up"
@@ -29,7 +45,7 @@ export function DigitRow({ digit, prob, rank, isTop }: DigitRowProps) {
         <div
           className={cn(
             "absolute inset-y-0 left-0 rounded-full origin-left animate-bar-grow",
-            isTop ? "bg-primary" : "bg-foreground/30"
+            barClass
           )}
           style={{
             width: `${Math.max(prob * 100, 0.5)}%`,
@@ -43,7 +59,7 @@ export function DigitRow({ digit, prob, rank, isTop }: DigitRowProps) {
           isTop ? "text-foreground font-semibold" : "text-muted-foreground"
         )}
       >
-        {(prob * 100).toFixed(2)}%
+        {(prob * 100).toFixed(decimals)}%
       </span>
     </div>
   );

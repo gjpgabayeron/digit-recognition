@@ -111,8 +111,10 @@ app.post("/predict/raw", predictLimiter, async (req, res) => {
     }
 
     const inputTensor = tf.tensor2d([data], [1, 784]);
+    const started = performance.now();
     const prediction = model.predict(inputTensor);
     const probabilities = await prediction.data();
+    const inferenceMs = Math.round((performance.now() - started) * 10) / 10;
     const predictedClass = prediction.argMax(-1).dataSync()[0];
 
     inputTensor.dispose();
@@ -122,6 +124,7 @@ app.post("/predict/raw", predictLimiter, async (req, res) => {
       predictedClass,
       probabilities: Array.from(probabilities),
       confidence: probabilities[predictedClass],
+      inferenceMs,
     });
   } catch (error) {
     console.error("Prediction error:", error);
@@ -130,7 +133,13 @@ app.post("/predict/raw", predictLimiter, async (req, res) => {
 });
 
 app.get("/health", (req, res) => {
-  res.json({ status: "ok", modelLoaded: !!model, version });
+  res.json({
+    status: "ok",
+    modelLoaded: !!model,
+    version,
+    layers: [128, 64, 10],
+    params: model ? model.countParams() : null,
+  });
 });
 
 // Serve built frontend in production

@@ -18,10 +18,12 @@ export function ModelPreview({ tensor }: ModelPreviewProps) {
         ref={ref}
         width={28}
         height={28}
-        className="w-16 h-16 rounded-md border border-border bg-white"
+        className="w-24 h-24 rounded-md border border-border bg-white"
         style={{ imageRendering: "pixelated" }}
       />
-      <span className="font-mono text-[10px] text-muted-foreground">28×28 input</span>
+      <span className="font-mono text-[11px] font-medium text-foreground/80">
+        What the model saw (28×28)
+      </span>
     </div>
   );
 }

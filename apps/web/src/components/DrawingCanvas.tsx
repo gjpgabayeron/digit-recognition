@@ -23,6 +23,23 @@ export function DrawingCanvas({
   const lastRef = useRef<{ x: number; y: number } | null>(null);
   const hasInkRef = useRef(false);
 
+  const draw = (
+    ctx: CanvasRenderingContext2D,
+    from: { x: number; y: number },
+    to: { x: number; y: number }
+  ) => {
+    const w = (brush / MODEL_SIZE) * DISPLAY_SIZE;
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = w;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.filter = `blur(${BLUR_PX}px)`;
+    ctx.beginPath();
+    ctx.moveTo(from.x, from.y);
+    ctx.lineTo(to.x, to.y);
+    ctx.stroke();
+  };
+
   const resetCanvas = useCallback(() => {
     const cvs = canvasRef.current;
     if (!cvs) return;
@@ -58,23 +75,6 @@ export function DrawingCanvas({
     return { x: (e.clientX - r.left) * sx, y: (e.clientY - r.top) * sy };
   };
 
-  const draw = (
-    ctx: CanvasRenderingContext2D,
-    from: { x: number; y: number },
-    to: { x: number; y: number }
-  ) => {
-    const w = (brush / MODEL_SIZE) * DISPLAY_SIZE;
-    ctx.strokeStyle = "#ffffff";
-    ctx.lineWidth = w;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.filter = `blur(${BLUR_PX}px)`;
-    ctx.beginPath();
-    ctx.moveTo(from.x, from.y);
-    ctx.lineTo(to.x, to.y);
-    ctx.stroke();
-  };
-
   const handlePointerDown = (e: React.PointerEvent) => {
     e.preventDefault();
     (e.currentTarget as HTMLCanvasElement).setPointerCapture(e.pointerId);
@@ -108,8 +108,11 @@ export function DrawingCanvas({
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        className="block w-full h-full rounded-xl bg-black touch-none cursor-crosshair"
-        style={{ imageRendering: "pixelated" }}
+        onLostPointerCapture={handlePointerUp}
+        role="img"
+        aria-label="Drawing canvas, pointer or touch. Draw a digit from 0 to 9, then press Predict or Enter."
+        tabIndex={-1}
+        className="block w-full h-full rounded-xl bg-black touch-none cursor-crosshair focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-black"
       />
       <div className="absolute inset-0 rounded-xl canvas-grid pointer-events-none" />
     </div>

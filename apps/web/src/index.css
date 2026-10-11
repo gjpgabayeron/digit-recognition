@@ -1,31 +1,31 @@
-@import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Geist:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
 @import "tailwindcss";
 
 @theme {
   /* Fonts */
-  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, monospace;
+  --font-sans: "Chakra Petch", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
-  /* shadcn zinc palette (light) */
-  --color-background: hsl(0 0% 100%);
-  --color-foreground: hsl(240 10% 3.9%);
-  --color-muted: hsl(240 4.8% 95.9%);
-  --color-muted-foreground: hsl(240 3.8% 46.1%);
-  --color-border: hsl(240 5.9% 90%);
-  --color-input: hsl(240 5.9% 90%);
-  --color-ring: hsl(240 5% 64.9%);
-  --color-primary: hsl(240 5.9% 10%);
-  --color-primary-foreground: hsl(0 0% 98%);
-  --color-secondary: hsl(240 4.8% 95.9%);
-  --color-secondary-foreground: hsl(240 5.9% 10%);
-  --color-accent: hsl(240 4.8% 95.9%);
-  --color-accent-foreground: hsl(240 5.9% 10%);
-  --color-destructive: hsl(0 84.2% 60.2%);
+  /* Instrument bench: warm charcoal chrome, warm phosphor text, amber readings */
+  --color-background: hsl(24 10% 13%);
+  --color-foreground: hsl(38 36% 92%);
+  --color-muted: hsl(28 10% 21%);
+  --color-muted-foreground: hsl(32 10% 66%);
+  --color-border: hsl(32 14% 82% / 0.16);
+  --color-input: hsl(32 14% 82% / 0.2);
+  --color-ring: hsl(36 82% 55%);
+  --color-primary: hsl(38 30% 90%);
+  --color-primary-foreground: hsl(24 25% 10%);
+  --color-secondary: hsl(28 10% 22%);
+  --color-secondary-foreground: hsl(38 30% 90%);
+  --color-accent: hsl(28 10% 22%);
+  --color-accent-foreground: hsl(38 30% 90%);
+  --color-destructive: hsl(4 72% 60%);
   --color-destructive-foreground: hsl(0 0% 98%);
-  --color-card: hsl(0 0% 100%);
-  --color-card-foreground: hsl(240 10% 3.9%);
-  --color-popover: hsl(0 0% 100%);
-  --color-popover-foreground: hsl(240 10% 3.9%);
+  --color-card: hsl(24 9% 17%);
+  --color-card-foreground: hsl(38 36% 92%);
+  --color-popover: hsl(24 9% 17%);
+  --color-popover-foreground: hsl(38 36% 92%);
 
   --radius-sm: calc(0.5rem - 4px);
   --radius-md: calc(0.5rem - 2px);
@@ -92,7 +92,7 @@
   background-size: calc(100% / 28) calc(100% / 28);
 }
 .shimmer-bg {
-  background: linear-gradient(90deg, hsl(240 5% 96%) 0%, hsl(240 5% 92%) 50%, hsl(240 5% 96%) 100%);
+  background: linear-gradient(90deg, hsl(28 10% 21%) 0%, hsl(28 9% 27%) 50%, hsl(28 10% 21%) 100%);
   background-size: 200% 100%;
 }
 
@@ -101,6 +101,45 @@
 *::before,
 *::after {
   box-sizing: border-box;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+:root {
+  color-scheme: dark;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(36 12% 30%) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: hsl(36 12% 30%);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: hsl(36 45% 45%);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::selection {
+  background: hsl(36 82% 52% / 0.35);
+  color: hsl(38 36% 94%);
 }
 html,
 body,
@@ -116,8 +155,8 @@ body,
 }
 body {
   margin: 0;
-  background: hsl(0 0% 98%);
-  color: hsl(240 10% 3.9%);
+  background: hsl(24 10% 13%);
+  color: hsl(38 36% 92%);
   font-feature-settings: "cv11", "ss01";
   -webkit-font-smoothing: antialiased;
 }
